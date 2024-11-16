@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/style.css">
+    <title>Upload de Arquivos</title>
+</head>
+<body>
+    <h1>Upload de Arquivos</h1>
+    <form id="upload-form" enctype="multipart/form-data">
+        <input type="file" id="file-input" name="file" accept=".txt,.xml,.json,.csv">
+        <button type="button" onclick="uploadFile()">Enviar</button>
+    </form>
+    <div id="result"></div>
+
+    <script>
+        async function uploadFile() {
+            const input = document.getElementById('file-input');
+            const file = input.files[0];
+            if (!file) {
+                alert('Por favor, selecione um arquivo para upload.');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('file', file);
+
+            try {
+                const response = await fetch('http://127.0.0.1:8000/upload/', {
+                    method: 'POST',
+                    body: formData
+                });
+                if (!response.ok) {
+                    throw new Error(`Erro no upload: ${response.statusText}`);
+                }
+                const result = await response.json();
+                document.getElementById('result').innerText = JSON.stringify(result, null, 2);
+            } catch (error) {
+                document.getElementById('result').innerText = `Erro ao fazer upload: ${error.message}`;
+            }
+        }
+    </script>
+</body>
+</html>
